@@ -94,11 +94,13 @@ Step 3: 你看風險摘要，自己決定
 
 | 工具 | Windows | macOS | Linux |
 |---|---|---|---|
-| osv-scanner | `winget install Google.OSVScanner` | `brew install osv-scanner` | 下載 [release binary](https://github.com/google/osv-scanner/releases) 放入 PATH |
-| semgrep | `pip install semgrep` | `pip install semgrep` 或 `brew install semgrep` | `pip install semgrep` |
-| gitleaks | `winget install gitleaks` | `brew install gitleaks` | 下載 [release binary](https://github.com/gitleaks/gitleaks/releases) 放入 PATH，或用套件管理工具（如 apt 需另加 repo）|
+| osv-scanner | `winget install Google.OSVScanner --silent --disable-interactivity` | `brew install osv-scanner` | 下載 [release binary](https://github.com/google/osv-scanner/releases) 放入 PATH |
+| semgrep | `python -m pip install semgrep` | `pip install semgrep` 或 `brew install semgrep` | `pip install semgrep` |
+| gitleaks | `winget install gitleaks --silent --disable-interactivity` | `brew install gitleaks` | 下載 [release binary](https://github.com/gitleaks/gitleaks/releases) 放入 PATH，或用套件管理工具（如 apt 需另加 repo）|
 
-> semgrep 在 Windows 上需要 Python 環境（`pip install semgrep` 即可，目前已原生支援 Windows，不需 WSL）。
+> semgrep 在 Windows 上需要**完整版 Python**（`python -m pip install semgrep`）。若 `python` 指令指向 Microsoft Store 的 app-execution-alias stub（`python -m pip` 沒輸出、exit code 異常），先 `winget install Python.Python.3.12 --silent --disable-interactivity` 裝真正的 Python。
+>
+> `winget install` 加 `--silent --disable-interactivity` 可避免冗長的下載進度條輸出。
 
 OpenSSF Scorecard 維度透過公開 API 查詢，**不需安裝任何東西**，僅需網路連線。
 

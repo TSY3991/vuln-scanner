@@ -19,9 +19,9 @@ description: 對本機專案資料夾或開源 GitHub repo 進行安全弱點掃
 
 | 工具 | 用途 | 缺少時的安裝指引 |
 |---|---|---|
-| `osv-scanner` | 依賴套件已知漏洞（CVE/OSV-DB） | `winget install Google.OSVScanner`（或從 https://github.com/google/osv-scanner/releases 下載執行檔放入 PATH）|
-| `semgrep` | SAST 程式碼層級弱點 | `pip install semgrep` |
-| `gitleaks` | git history / 檔案中機密資訊洩漏 | `winget install gitleaks`（或從 https://github.com/gitleaks/gitleaks/releases 下載）|
+| `osv-scanner` | 依賴套件已知漏洞（CVE/OSV-DB） | `winget install Google.OSVScanner --silent --disable-interactivity`（或從 https://github.com/google/osv-scanner/releases 下載執行檔放入 PATH）|
+| `semgrep` | SAST 程式碼層級弱點 | `python -m pip install semgrep` |
+| `gitleaks` | git history / 檔案中機密資訊洩漏 | `winget install gitleaks --silent --disable-interactivity`（或從 https://github.com/gitleaks/gitleaks/releases 下載）|
 
 **任一工具缺少時**：
 
@@ -29,6 +29,10 @@ description: 對本機專案資料夾或開源 GitHub repo 進行安全弱點掃
 2. 詢問使用者是否要先安裝（給出指令），或是否跳過該維度繼續掃其他兩項。
 3. 不要自己擅自執行安裝指令（`winget install` / `pip install` 屬於改動使用者系統環境，需使用者確認）——這點與一般 bash 操作不同，因為會安裝全域工具。
 4. 若使用者明確說「幫我裝」，才執行安裝指令。
+
+**執行安裝指令時務必加 `--silent --disable-interactivity`**（winget）：沒加的話 winget 會把下載進度條（數百個字元的 `█▒` 動畫）整段塞進輸出，浪費大量 token。`pip`/`python -m pip` 本身輸出量正常，不需特殊處理。
+
+**Windows 上 `python` 指令注意**：若 `python --version` 顯示正常但 `python -m pip ...` 沒有任何輸出且 exit code 異常（例如 49），代表這是 Microsoft Store 的 app-execution-alias stub，不是真正的 Python。需先 `winget install Python.Python.3.12 --silent --disable-interactivity` 裝真正的 Python，再用完整路徑（如 `C:\Users\<user>\AppData\Local\Programs\Python\Python312\python.exe`）呼叫，避免重複嘗試浪費 token。
 
 若三個工具都已存在，直接進入第 2 步，不用浪費時間提示。
 
