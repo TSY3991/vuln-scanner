@@ -63,7 +63,9 @@ curl "https://api.securityscorecards.dev/projects/github.com/<owner>/<repo>"
 osv-scanner scan source <target-dir>
 ```
 
-會自動偵測 `package-lock.json` / `requirements.txt` / `go.mod` / `Cargo.lock` 等鎖定檔，比對 OSV 資料庫。若專案沒有任何依賴鎖定檔，這一項可省略並在報告中註明「無依賴鎖定檔，未執行」。
+會自動偵測 `package-lock.json` / `requirements.txt` / `go.mod` / `Cargo.lock` 等鎖定檔，比對 OSV 資料庫。
+
+**實測行為**：若專案沒有任何依賴鎖定檔（例如只有 `package.json` 但沒有 `package-lock.json`），會輸出 `No package sources found, --help for usage information.` 並回傳非 0 exit code（不是執行失敗，是「沒東西可掃」）。看到這個訊息時，在報告中註明「無依賴鎖定檔，未執行」即可，不要當成掃描錯誤。
 
 ### 3b. SAST 程式碼弱點（semgrep）
 
@@ -71,7 +73,9 @@ osv-scanner scan source <target-dir>
 semgrep --config auto <target-dir>
 ```
 
-`--config auto` 會依語言自動套用 community ruleset（涵蓋 OWASP Top 10 類型問題如 SQL injection、command injection、XSS、不安全的 deserialization 等）。專案很大時可能執行較久，先告知使用者預估時間。
+`--config auto` 會依語言自動套用 community ruleset（涵蓋 OWASP Top 10 類型問題如 SQL injection、command injection、XSS、不安全的 deserialization 等），**不需要 `semgrep login`**（未登入會少一些 Registry 額外規則，但 community ruleset 已可正常掃描並回傳 0 findings 之類結果）。專案很大時可能執行較久，先告知使用者預估時間。
+
+**實測行為**：掃描結果預設只統計 git 追蹤的檔案，輸出最後會有 `Scan completed successfully` 與 `Findings: N (M blocking)`。若 `Findings: 0`，報告中直接寫「✅ 未發現程式碼層級弱點」。
 
 ### 3c. 機密資訊洩漏（gitleaks）
 
